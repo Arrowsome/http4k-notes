@@ -8,7 +8,7 @@ class UserController(private val userService: UserService) {
     fun registerUser(request: Request): Response {
         val registerData = registerLens.extract(request)
 
-        val token = userService.createUser(registerData)
+        val token = userService.registerUser(registerData)
 
         return Response(Status.CREATED)
             .with(tokenLens of Token(token))

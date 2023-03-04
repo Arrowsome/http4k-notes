@@ -28,7 +28,7 @@ class UserControllerTests {
     @Test
     fun `register a new user on the server`() {
         val request = Request(POST, "/api/users").with(userController.registerLens of USER_REGISTER)
-        every { userService.createUser(userController.registerLens.extract(request)) } returns SAMPLE_JWT_TOKEN
+        every { userService.registerUser(userController.registerLens.extract(request)) } returns SAMPLE_JWT_TOKEN
         val response = userController.registerUser(request)
 
         assertThat(response, hasStatus(CREATED) and hasBody(userController.tokenLens, equalTo(TOKEN)))
