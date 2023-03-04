@@ -1,6 +1,6 @@
 package me.arrowsome.common
 
-sealed class ApiException(val msg: String) : RuntimeException() {
+sealed class ApiException(msg: String) : RuntimeException(msg) {
     class Invalid(msg: String) : ApiException(msg)
     class NotFound(msg: String) : ApiException(msg)
 }

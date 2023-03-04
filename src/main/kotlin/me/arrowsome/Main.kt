@@ -3,6 +3,7 @@ package me.arrowsome
 import me.arrowsome.common.LOGIN_URL
 import me.arrowsome.common.USERS_URL
 import me.arrowsome.common.di
+import me.arrowsome.common.exceptionFilter
 import me.arrowsome.user.UserController
 import org.http4k.core.Method
 import org.http4k.core.then
@@ -28,6 +29,7 @@ val backend: RoutingHttpHandler
 fun main() {
     DebuggingFilters
         .PrintRequestAndResponse()
+        .then(exceptionFilter)
         .then(backend)
         .asServer(SunHttp(9000))
         .start()
