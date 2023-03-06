@@ -14,6 +14,11 @@ class UserService(
         if (!data.password.matches("\\S{8,}".toRegex()))
             throw ApiException.Invalid("${data.password} is not a strong password!")
 
+        if (userDao.anyUser(data.email))
+            throw ApiException.Conflict("Existing user!")
+
+        userDao.insertUser(data.toUserEntity())
+
         return jwtHelper.generateToken()
     }
 

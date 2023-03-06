@@ -1,9 +1,8 @@
 package me.arrowsome.user
 
 import com.mongodb.client.MongoCollection
-import org.litote.kmongo.and
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
+import me.arrowsome.common.ApiException
+import org.litote.kmongo.*
 
 class UserDao(private val usersCollection: MongoCollection<UserEntity>) {
 
@@ -22,5 +21,12 @@ class UserDao(private val usersCollection: MongoCollection<UserEntity>) {
                     UserEntity::password eq password,
                 ),
             ) != null
+    }
+
+    fun insertUser(entity: UserEntity): UserEntity {
+        val result = usersCollection.insertOne(entity)
+        if (!result.wasAcknowledged())
+            throw ApiException.ServerError("Server malfunction!")
+        return usersCollection.findOneById(entity.id)!!
     }
 }

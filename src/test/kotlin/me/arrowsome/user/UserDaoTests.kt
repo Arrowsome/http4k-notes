@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.litote.kmongo.KMongo
@@ -48,6 +49,13 @@ class UserDaoTests {
 
         val userThreeAuthenticated = userDao.anyUserWithCredentials(EMAIL, PASSWORD.substring(1))
         assertThat(userThreeAuthenticated, equalTo(false))
+    }
+
+    @Test
+    fun `insert user in users collection`() {
+        usersCollection.drop()
+        val user = userDao.insertUser(USER_ENTITY)
+        assertNotNull(user)
     }
 
     companion object {

@@ -2,6 +2,7 @@ package me.arrowsome.common
 
 import org.http4k.core.*
 import org.http4k.core.Status.Companion.BAD_REQUEST
+import org.http4k.core.Status.Companion.CONFLICT
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.format.Moshi.auto
 
@@ -13,6 +14,8 @@ val exceptionFilter = Filter { handler ->
             Response(NOT_FOUND).with(errorLens of ApiError(exc.message))
         } catch (exc: ApiException.Invalid) {
             Response(BAD_REQUEST).with(errorLens of ApiError(exc.message))
+        } catch (exc: ApiException.Conflict) {
+            Response(CONFLICT).with(errorLens of ApiError(exc.message))
         }
     }
 

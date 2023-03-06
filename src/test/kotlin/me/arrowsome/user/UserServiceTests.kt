@@ -15,19 +15,19 @@ import org.junit.jupiter.api.assertThrows
 class UserServiceTests {
     private lateinit var userService: UserService
     private lateinit var jwtHelper: JwtHelper
-    private lateinit var userRepository: UserDao
+    private lateinit var userDao: UserDao
 
     @BeforeEach
     fun setup() {
         jwtHelper = mockk()
-        userRepository = mockk()
-        userService = UserService(jwtHelper, userRepository)
+        userDao = mockk()
+        userService = UserService(jwtHelper, userDao)
     }
 
     @Test
     fun `user creation returns a jwt`() {
         every { jwtHelper.generateToken() } returns SAMPLE_JWT_TOKEN
-        every { userRepository.anyUser(USER_REGISTER.email) } returns false
+        every { userDao.anyUser(USER_REGISTER.email) } returns false
         val token = userService.registerUser(USER_REGISTER)
         assertThat(token, equalTo(SAMPLE_JWT_TOKEN))
     }
@@ -55,17 +55,20 @@ class UserServiceTests {
     }
 
     @Test
-    fun `user creation with duplicate credentials throws conflict exception`() {
-        val exc = assertThrows<ApiException.Invalid> {
+    fun `user creation with duplicate email throws conflict exception`() {
+        val exc = assertThrows<ApiException.Conflict> {
             every { jwtHelper.generateToken() } returns SAMPLE_JWT_TOKEN
+            every { userDao.anyUser(USER_REGISTER.email) } returns true
             userService.registerUser(USER_REGISTER)
         }
+        assertNotNull(exc)
+        assertThat(exc.message, equalTo("Existing user!"))
     }
 
     @Test
     fun `user login returns jwt`() {
         every { jwtHelper.generateToken() } returns SAMPLE_JWT_TOKEN
-        every { userRepository.anyUserWithCredentials(USER_LOGIN.email, USER_LOGIN.password) } returns true
+        every { userDao.anyUserWithCredentials(USER_LOGIN.email, USER_LOGIN.password) } returns true
         val token = userService.loginUser(USER_LOGIN)
         assertThat(token, equalTo(SAMPLE_JWT_TOKEN))
     }
@@ -74,7 +77,7 @@ class UserServiceTests {
     fun `user login throws not found on no user found`() {
         val exc = assertThrows<ApiException.NotFound> {
             every { jwtHelper.generateToken() } returns SAMPLE_JWT_TOKEN
-            every { userRepository.anyUserWithCredentials(USER_LOGIN.email, USER_LOGIN.password) } returns false
+            every { userDao.anyUserWithCredentials(USER_LOGIN.email, USER_LOGIN.password) } returns false
             userService.loginUser(USER_LOGIN)
         }
         assertNotNull(exc)
