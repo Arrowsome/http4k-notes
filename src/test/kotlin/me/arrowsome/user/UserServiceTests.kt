@@ -15,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 class UserServiceTests {
     private lateinit var userService: UserService
     private lateinit var jwtHelper: JwtHelper
-    private lateinit var userRepository: UserRepository
+    private lateinit var userRepository: UserDao
 
     @BeforeEach
     fun setup() {
@@ -40,7 +40,7 @@ class UserServiceTests {
             userService.registerUser(userWithInvalidEmail)
         }
         assertNotNull(exc)
-        assertThat(exc.msg, equalToIgnoringCase("${userWithInvalidEmail.email} is not a valid email address!"))
+        assertThat(exc.message, equalToIgnoringCase("${userWithInvalidEmail.email} is not a valid email address!"))
     }
 
     @Test
@@ -51,7 +51,15 @@ class UserServiceTests {
             userService.registerUser(userWithInvalidPassword)
         }
         assertNotNull(exc)
-        assertThat(exc.msg, equalToIgnoringCase("${userWithInvalidPassword.password} is not a strong password!"))
+        assertThat(exc.message, equalToIgnoringCase("${userWithInvalidPassword.password} is not a strong password!"))
+    }
+
+    @Test
+    fun `user creation with duplicate credentials throws conflict exception`() {
+        val exc = assertThrows<ApiException.Invalid> {
+            every { jwtHelper.generateToken() } returns SAMPLE_JWT_TOKEN
+            userService.registerUser(USER_REGISTER)
+        }
     }
 
     @Test
@@ -70,7 +78,7 @@ class UserServiceTests {
             userService.loginUser(USER_LOGIN)
         }
         assertNotNull(exc)
-        assertThat(exc.msg, equalToIgnoringCase("no user was found with provided credentials!"))
+        assertThat(exc.message, equalToIgnoringCase("no user was found with provided credentials!"))
     }
 
     companion object {

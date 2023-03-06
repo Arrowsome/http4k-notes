@@ -41,6 +41,8 @@ dependencies {
     implementation "org.http4k:http4k-format-moshi:${http4kVersion}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
     implementation 'org.kodein.di:kodein-di:7.18.0'
+    implementation 'org.litote.kmongo:kmongo:4.8.0'
+    implementation 'com.auth0:java-jwt:4.3.0'
     testImplementation "org.http4k:http4k-testing-approval:${http4kVersion}"
     testImplementation "org.http4k:http4k-testing-hamkrest:${http4kVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"

@@ -5,7 +5,7 @@ import me.arrowsome.common.JwtHelper
 
 class UserService(
     private val jwtHelper: JwtHelper,
-    private val userRepository: UserRepository,
+    private val userDao: UserDao,
 ) {
     fun registerUser(data: UserRegister): String {
         if (!data.email.matches(".+@.+\\..+".toRegex()))
@@ -18,7 +18,7 @@ class UserService(
     }
 
     fun loginUser(data: UserLogin): String {
-        val credentialExists = userRepository.anyUserWithCredentials(
+        val credentialExists = userDao.anyUserWithCredentials(
             data.email,
             data.password,
         )
